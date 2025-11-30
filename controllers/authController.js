@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import * as userModel from '../models/userModel.js';
+import { NotificationService } from '../services/notificationServer.js';
 
 // INSCRIPTION
 export const register = async (req, res) => {
@@ -41,7 +42,13 @@ export const register = async (req, res) => {
       token,
       user: newUser
     });
-
+    // Notification de bienvenue
+    Promise.all([
+      NotificationService.notifyUserWelcome(newUser.id),    // 3 secondes
+      NotificationService.notifyAdminsNewUser(newUser)      // 2 secondes
+    ]).catch(error => {
+      console.error('Erreurs notifications:', error);  // Seulement pour nous
+    });
   } catch (error) {
     console.error('Erreur inscription:', error);
     res.status(500).json({ error: 'Erreur serveur' });
@@ -94,6 +101,7 @@ export const login = async (req, res) => {
       token,
       user: userWithoutPassword
     });
+    
 
   } catch (error) {
     console.error('Erreur connexion:', error);

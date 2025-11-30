@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
 import authRoutes from './routes/authRoute.js';
+import notifRoutes from './routes/notificationRoute.js';
 import { testConnection } from './config/database.js';
 // a supp apres
 import { pool } from './config/database.js';
@@ -19,6 +20,7 @@ app.use(cors());
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/notif', notifRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'API Auth JWT 🚀' });
