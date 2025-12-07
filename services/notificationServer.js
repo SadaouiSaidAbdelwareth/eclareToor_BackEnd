@@ -1,4 +1,4 @@
-  import { Notification } from '../models/notificationModel.js';
+import { Notification } from '../models/notificationModel.js';
 import { query } from '../config/database.js';
 
 // Templates organisés par catégorie
@@ -14,20 +14,26 @@ const TEMPLATES = {
     BOOKING_CONFIRMED: {
       type: 'user_booking_confirmed', 
       title: 'Réservation confirmée !',
-      message: 'Votre réservation à {hotelName} est confirmée.',
+      message: 'Votre réservation à {tripName} est confirmée.',
       action_url: '/bookings/{bookingId}'
     },
     PAYMENT_SUCCESS: {
       type: 'user_payment_success',
       title: 'Paiement accepté',
-      message: 'Votre paiement de {amount}€ a été traité avec succès.',
+      message: 'Votre paiement aux réservation {tripName} a été traité avec succès.',
       action_url: '/bookings/{bookingId}'
     },
     BOOKING_CANCELLED: {
       type: 'user_booking_cancelled',
       title: 'Réservation annulée',
-      message: 'Votre réservation à {hotelName} a été annulée.',
+      message: 'Votre réservation à {tripName} a été annulée.',
       action_url: '/bookings'
+    },
+    BOOKING_PENDING:{
+      type: 'user_payment_pending',
+      title: 'Réservation pending ...',
+      message: 'Votre réservation à {tripName} est pending.',
+      action_url: '/bookings/{bookingId}'
     }
   },
 
@@ -42,7 +48,7 @@ const TEMPLATES = {
     NEW_BOOKING: {
       type: 'admin_new_booking',
       title: '🏨 Nouvelle réservation',
-      message: 'Nouvelle réservation pour {hotelName} par {userName}.',
+      message: 'Nouvelle réservation pour {tripName} par {userName}.',
       action_url: '/admin/bookings/{bookingId}'
     },
     PAYMENT_RECEIVED: {
@@ -55,6 +61,12 @@ const TEMPLATES = {
       type: 'admin_payment_failed',
       title: '❌ Paiement échoué',
       message: 'Paiement de {amount}€ échoué pour réservation #{bookingId}.',
+      action_url: '/admin/bookings/{bookingId}'
+    },
+   BOOKING_CANCELLED_USER: {
+      type: 'admin_booking_cancelled_user',
+      title: 'Réservation annulée par un utilisateur',
+      message: '{userName} a annulé sa réservation pour {tripName}.',
       action_url: '/admin/bookings/{bookingId}'
     }
   }
@@ -126,6 +138,10 @@ export class NotificationService {
     return await this.createFromTemplate(userId, 'USER', 'BOOKING_CANCELLED', bookingData);
   }
 
+  static async notifyUserBookingPending(userId, bookingData) {
+    return await this.createFromTemplate(userId, 'USER', 'BOOKING_PENDING', bookingData);
+  }
+
   // === METHODES ADMIN ===
 
   // Trouver tous les admins
@@ -140,7 +156,7 @@ export class NotificationService {
   // Notifier tous les admins
   static async notifyAllAdmins(templateKey, variables = {}) {
     const adminIds = await this.findAllAdmins();
-    
+    console.log(`👥 Envoi de la notification aux admins (${adminIds.length})`);
     if (adminIds.length === 0) {
       console.log('⚠️ Aucun admin trouvé');
       return [];
@@ -180,6 +196,9 @@ export class NotificationService {
 
   static async notifyAdminsPaymentFailed(paymentData) {
     return await this.notifyAllAdmins('PAYMENT_FAILED', paymentData);
+  }
+  static async notifyAdminsBookingCancelledByUser(bookingData) {
+    return await this.notifyAllAdmins('BOOKING_CANCELLED_USER', bookingData);
   }
 
   // === METHODES DE LECTURE ===
