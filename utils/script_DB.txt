@@ -102,3 +102,44 @@ CREATE TABLE trip_itineraries (
     activities TEXT
 );
 
+
+
+CREATE TABLE bookings (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    trip_id UUID NOT NULL REFERENCES trips(id) ON DELETE CASCADE,
+
+    passengers_adult INT NOT NULL CHECK (passengers_adult >= 0),
+    passengers_child INT NOT NULL CHECK (passengers_child >= 0),
+    passengers_baby INT NOT NULL CHECK (passengers_baby >= 0),
+
+    status VARCHAR(20) NOT NULL CHECK (status IN ('PENDING','CONFIRMED','PAID','CANCELLED')),
+    
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+INSERT INTO bookings (
+    user_id, trip_id, passengers_adult, passengers_child, passengers_baby, status
+) VALUES (
+    'bfc2e725-ca92-4dbd-9898-65360fe7f778',
+    'b2a00501-e0ed-4224-95bf-1f387cb6a5a8',
+    2,   -- 2 adultes
+    1,   -- 1 enfant
+    0,   -- 0 bébé
+    'PENDING'
+);
+
+INSERT INTO bookings (
+    user_id, trip_id, passengers_adult, passengers_child, passengers_baby, status
+) VALUES (
+    'cdb52c28-0ca4-419b-8d98-020866018f48',
+    'b2a00501-e0ed-4224-95bf-1f387cb6a5a8',
+    2,   -- 1 adulte
+    2,   -- 0 enfant
+    1,   -- 1 bébé
+    'PAID'
+);
+
+

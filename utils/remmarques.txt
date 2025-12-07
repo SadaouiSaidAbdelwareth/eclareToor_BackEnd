@@ -3,3 +3,4 @@
 + update many , deletemany =>itenerare + hotel_trip
 + fichier temps 
 + securise les image
++ admin peut ajouter user .
