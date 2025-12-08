@@ -68,7 +68,14 @@ const TEMPLATES = {
       title: 'Réservation annulée par un utilisateur',
       message: '{userName} a annulé sa réservation pour {tripName}.',
       action_url: '/admin/bookings/{bookingId}'
+    },
+    CONTACT_ADDED: {
+      type: 'admin_new_contact',
+      title: '📩 Nouveau communtaire',
+      message: '{fullName} ({email}) a envoyé un nouveau commentaire.',
+      action_url: '/admin/contacts/{contactId}'
     }
+
   }
 };
 
@@ -200,6 +207,14 @@ export class NotificationService {
   static async notifyAdminsBookingCancelledByUser(bookingData) {
     return await this.notifyAllAdmins('BOOKING_CANCELLED_USER', bookingData);
   }
+
+  static async notifyAdminsNewContact(contactData) {
+    return await this.notifyAllAdmins('CONTACT_ADDED', {
+      contactId: contactData.id,
+      fullName: contactData.full_name,
+      email: contactData.email
+    });
+}
 
   // === METHODES DE LECTURE ===
 

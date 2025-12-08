@@ -1,6 +1,5 @@
 import { contactModel } from "../models/contactModel.js";
-// import NotificationService from "../services/NotificationService.js";
-// import { findAdmins } from "../helpers/findAdmins.js";  // si tu as cette fonction
+import { NotificationService } from './notificationServer.js';
 
 export const contactService = {
   async createContact(data) {
@@ -11,25 +10,12 @@ export const contactService = {
 
     // Insert into DB
     const contact = await contactModel.create(data);
+    try {
+          await NotificationService.notifyAdminsNewContact(contact);
 
-    // Notifications aux admins
-    // try {
-    //   const admins = await findAdmins();   // récupère admins (user.role = 'admin')
-
-    //   await Promise.all(
-    //     admins.map(admin =>
-    //       NotificationService.notifyAdminNewContact({
-    //         adminId: admin.id,
-    //         fullName: contact.full_name,
-    //         email: contact.email,
-    //         message: contact.message
-    //       })
-    //     )
-    //   );
-    // } catch (error) {
-    //   console.error("Notification contact failed:", error.message);
-    // }
-
+        } catch (e) {
+          console.error('❌ Notification contact échouée:', e.message);
+        }
     return contact;
   },
 
