@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
@@ -10,9 +10,12 @@ import tripHotelsRoutes from "./routes/tripHotelsRoutes.js";
 import tripItinerariesRoutes from "./routes/tripItineraryRoutes.js";
 import bookingRoutes from "./routes/bookingRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
+import requestRoutes from "./routes/requestRoutes.js";
+import responseRoutes from "./routes/requestResponseRoutes.js";
 import { testConnection } from './config/database.js';
 // a supp apres
 import { pool } from './config/database.js';
+import { request } from 'http';
 
 dotenv.config();
 
@@ -33,6 +36,8 @@ app.use("/api/trips", tripHotelsRoutes);
 app.use("/api/trips", tripItinerariesRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/contacts", contactRoutes);
+app.use("/api/requests", requestRoutes);
+app.use("/api/responses", responseRoutes);
 
 // Routes
 app.use('/api/auth', authRoutes);
