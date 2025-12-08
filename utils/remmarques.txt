@@ -1,6 +1,8 @@
-+ ajouter champs dans sign up
++ ajouter champs dans sign up/ regler service
 + delete tous => itenerare + hotel_trip
 + update many , deletemany =>itenerare + hotel_trip
 + fichier temps 
 + securise les image
 + admin peut ajouter user .
++ request / response => verifier user requist his , notification
++ add get hotels name , champs catg(makka , madina , tourisme)
