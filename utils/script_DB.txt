@@ -142,4 +142,13 @@ INSERT INTO bookings (
     'PAID'
 );
 
+CREATE TABLE contacts (
+  id SERIAL PRIMARY KEY,
+  full_name VARCHAR(120) NOT NULL,
+  email VARCHAR(120) NOT NULL,
+  phone VARCHAR(30),
+  message TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
 

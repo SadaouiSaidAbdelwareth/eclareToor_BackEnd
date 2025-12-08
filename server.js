@@ -9,6 +9,7 @@ import tripRoutes from "./routes/tripRoute.js";
 import tripHotelsRoutes from "./routes/tripHotelsRoutes.js";
 import tripItinerariesRoutes from "./routes/tripItineraryRoutes.js";
 import bookingRoutes from "./routes/bookingRoutes.js";
+import contactRoutes from "./routes/contactRoutes.js";
 import { testConnection } from './config/database.js';
 // a supp apres
 import { pool } from './config/database.js';
@@ -31,6 +32,7 @@ app.use("/api/trips", tripRoutes);
 app.use("/api/trips", tripHotelsRoutes);
 app.use("/api/trips", tripItinerariesRoutes);
 app.use("/api/bookings", bookingRoutes);
+app.use("/api/contacts", contactRoutes);
 
 // Routes
 app.use('/api/auth', authRoutes);
