@@ -34,7 +34,14 @@ const TEMPLATES = {
       title: 'Réservation pending ...',
       message: 'Votre réservation à {tripName} est pending.',
       action_url: '/bookings/{bookingId}'
+    },
+    REQUEST_RESPONSE: {
+      type: 'user_request_response',
+      title: '📩 Nouvelle réponse',
+      message: 'Un administrateur a répondu à votre demande de {category}.',
+      action_url: '/requests/{requestId}'
     }
+
   },
 
   // === NOTIFICATIONS ADMIN ===
@@ -74,8 +81,13 @@ const TEMPLATES = {
       title: '📩 Nouveau communtaire',
       message: '{fullName} ({email}) a envoyé un nouveau commentaire.',
       action_url: '/admin/contacts/{contactId}'
+    },
+    NEW_REQUEST: {
+      type: 'admin_new_request',
+      title: '📨 Nouvelle demande utilisateur',
+      message: '{userName} a envoyé une nouvelle demande ({category}).',
+      action_url: '/admin/requests/{requestId}'
     }
-
   }
 };
 
@@ -149,6 +161,16 @@ export class NotificationService {
     return await this.createFromTemplate(userId, 'USER', 'BOOKING_PENDING', bookingData);
   }
 
+  static async notifyUserRequestResponse(userId, data) {
+    return await this.createFromTemplate(
+      userId,
+      'USER',
+      'REQUEST_RESPONSE',
+      data
+    );
+  }
+
+
   // === METHODES ADMIN ===
 
   // Trouver tous les admins
@@ -214,7 +236,15 @@ export class NotificationService {
       fullName: contactData.full_name,
       email: contactData.email
     });
-}
+  }
+
+  static async notifyAdminsNewRequest(data) {
+    return await this.notifyAllAdmins(
+      'NEW_REQUEST',
+      data
+    );
+  }
+
 
   // === METHODES DE LECTURE ===
 

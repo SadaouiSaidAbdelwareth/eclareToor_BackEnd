@@ -16,6 +16,12 @@ export const requestService = {
         category,
         requestId: request.id
       });
+      NotificationService.notifyAdminsNewRequest({
+        userName: `${user.prenom} ${user.nom}`,
+        category,
+        requestId: request.id
+      }).catch(console.error);
+
 
       return request;
     } catch (err) {

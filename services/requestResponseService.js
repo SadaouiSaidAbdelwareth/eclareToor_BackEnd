@@ -13,12 +13,18 @@ export const requestResponseService = {
       const response = await requestResponseModel.create(requestId, adminId, offer);
 
       // Notification user
-      // const userId = requestExists[0].user_id;
-      // await NotificationService.createFromTemplate(userId, 'USER', 'CONTACT_RESPONSE', {
+      // NotificationService.notifyUserRequestResponse(userId, {
       //   requestId,
-      //   offer
+      //   category: requestExists[0].category
       // });
 
+      // 🔔 Notification USER
+      const userId = requestExists[0].user_id;
+
+      NotificationService.notifyUserRequestResponse(userId, {
+        requestId,
+        category: requestExists[0].category
+      });
       return response;
     } catch (err) {
       throw new Error("Failed to create response: " + err.message);
