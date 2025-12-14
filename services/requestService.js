@@ -1,6 +1,6 @@
 import { requestModel } from '../models/requestModel.js';
 import { NotificationService } from './notificationServer.js';
-import { findUserById } from '../models/userModel.js';
+import { UserModel } from '../models/userModel.js';
 
 export const requestService = {
   create: async (userId, category, details) => {
@@ -10,7 +10,7 @@ export const requestService = {
       const request = await requestModel.create(userId, category, details);
 
       // Notification aux admins
-      const user = await findUserById(userId);
+      const user = await UserModel.findById(userId);
       await NotificationService.notifyAllAdmins('ADMIN_NEW_CONTACT', {
         userName: `${user.prenom} ${user.nom}`,
         category,

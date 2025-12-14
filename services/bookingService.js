@@ -1,6 +1,6 @@
 import { bookingModel } from "../models/bookingModel.js";
 import { tripModel } from "../models/tripModel.js";
-import { findUserById } from "../models/userModel.js";
+import { UserModel } from "../models/userModel.js";
 import { NotificationService } from "./notificationServer.js";
 
 export const bookingService = {
@@ -24,7 +24,7 @@ export const bookingService = {
       if (!user_id) {
         throw new Error("Admin must provide user_id to create booking");
       }
-      userExists = await findUserById(user_id);
+      userExists = await UserModel.findById(user_id);
       if (!userExists) {
         throw new Error("User not found");
       }

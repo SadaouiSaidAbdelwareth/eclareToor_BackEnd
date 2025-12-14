@@ -1,14 +1,14 @@
 import express from 'express';
-import { register, login, getProfile } from '../controllers/authController.js';
+import { authController } from '../controllers/authController.js';
 import { authenticateToken } from '../middleware/auth.js';
 
 const router = express.Router();
 
 // Routes publiques
-router.post('/register', register);
-router.post('/login', login);
+router.post('/register', authController.register);
+router.post('/login', authController.login);
 
 // Routes protégées
-router.get('/profile', authenticateToken, getProfile);
+router.get('/profile', authenticateToken, authController.getProfile);
 
 export default router;
