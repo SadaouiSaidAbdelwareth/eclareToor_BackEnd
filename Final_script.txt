@@ -1,0 +1,170 @@
+-- ===============================
+-- Extensions
+-- ===============================
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- ===============================
+-- TABLE: users
+-- ===============================
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    nom VARCHAR NOT NULL,
+    prenom VARCHAR NOT NULL,
+    email VARCHAR NOT NULL,
+    password VARCHAR NOT NULL,
+    role VARCHAR CHECK (role IN ('user', 'admin')),
+    is_active BOOLEAN,
+    linkfacebook VARCHAR,
+    nationalite VARCHAR NOT NULL,
+    phone VARCHAR NOT NULL,
+    created_at TIMESTAMP
+);
+
+-- ===============================
+-- TABLE: trips
+-- ===============================
+CREATE TABLE trips (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    type VARCHAR NOT NULL CHECK (type IN ('national', 'international', 'religieuse')),
+    title VARCHAR NOT NULL,
+    description TEXT NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    base_price NUMERIC NOT NULL,
+    images TEXT[],
+    equipment_list TEXT,
+    destination_wilaya VARCHAR,
+    destination_country VARCHAR,
+    omra_category VARCHAR CHECK (omra_category IN ('classic', 'vip')),
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+-- ===============================
+-- TABLE: hotels
+-- ===============================
+CREATE TABLE hotels (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR NOT NULL,
+    city VARCHAR NOT NULL,
+    stars INTEGER CHECK (stars BETWEEN 1 AND 5),
+    maps_url TEXT,
+    address TEXT,
+    images TEXT[],
+    type VARCHAR CHECK (type IN ('makka', 'madina', 'tourisme')),
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+-- ===============================
+-- TABLE: trip_hotels (N-N)
+-- ===============================
+CREATE TABLE trip_hotels (
+    trip_id UUID NOT NULL,
+    hotel_id UUID NOT NULL,
+    description TEXT,
+    PRIMARY KEY (trip_id, hotel_id),
+    FOREIGN KEY (trip_id) REFERENCES trips(id) ON DELETE CASCADE,
+    FOREIGN KEY (hotel_id) REFERENCES hotels(id) ON DELETE CASCADE
+);
+
+-- ===============================
+-- TABLE: trip_itineraries
+-- ===============================
+CREATE TABLE trip_itineraries (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    trip_id UUID,
+    day_date DATE NOT NULL,
+    activities TEXT,
+    FOREIGN KEY (trip_id) REFERENCES trips(id) ON DELETE CASCADE
+);
+
+-- ===============================
+-- TABLE: bookings
+-- ===============================
+CREATE TABLE bookings (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL,
+    trip_id UUID NOT NULL,
+    passengers_adult INTEGER NOT NULL CHECK (passengers_adult >= 0),
+    passengers_child INTEGER NOT NULL CHECK (passengers_child >= 0),
+    passengers_baby INTEGER NOT NULL CHECK (passengers_baby >= 0),
+    status VARCHAR NOT NULL CHECK (status IN ('PENDING', 'CONFIRMED', 'PAID', 'CANCELLED')),
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (trip_id) REFERENCES trips(id)
+);
+
+-- ===============================
+-- TABLE: contacts
+-- ===============================
+CREATE TABLE contacts (
+    id SERIAL PRIMARY KEY,
+    full_name VARCHAR NOT NULL,
+    email VARCHAR NOT NULL,
+    phone VARCHAR,
+    message TEXT NOT NULL,
+    created_at TIMESTAMP
+);
+
+-- ===============================
+-- TABLE: requests
+-- ===============================
+CREATE TABLE requests (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL,
+    category VARCHAR NOT NULL CHECK (category IN ('hotel', 'vol', 'omra', 'voyage')),
+    info JSONB NOT NULL,
+    status VARCHAR,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+-- ===============================
+-- TABLE: request_responses
+-- ===============================
+CREATE TABLE request_responses (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    request_id UUID NOT NULL,
+    admin_id UUID NOT NULL,
+    offer TEXT NOT NULL,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    FOREIGN KEY (request_id) REFERENCES requests(id),
+    FOREIGN KEY (admin_id) REFERENCES users(id)
+);
+
+-- ===============================
+-- TABLE: notifications
+-- ===============================
+CREATE TABLE notifications (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL,
+    type VARCHAR NOT NULL CHECK (
+        type IN (
+            'user_welcome',
+            'user_booking_confirmed',
+            'user_payment_success',
+            'user_booking_cancelled',
+            'user_payment_pending',
+            'user_request_response',
+            'admin_new_user',
+            'admin_new_booking',
+            'admin_payment_received',
+            'admin_payment_failed',
+            'admin_booking_cancelled_user',
+            'admin_new_contact',
+            'admin_new_request'
+        )
+    ),
+    title VARCHAR NOT NULL,
+    message TEXT NOT NULL,
+    is_read BOOLEAN,
+    action_url VARCHAR,
+    metadata JSONB,
+    created_at TIMESTAMP,
+    expires_at TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
