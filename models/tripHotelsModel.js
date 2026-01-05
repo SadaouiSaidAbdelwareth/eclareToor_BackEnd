@@ -12,7 +12,7 @@ export const tripHotelsModel = {
 
   async getByTrip(tripId) {
     const q = `
-      SELECT th.*, h.name, h.city, h.stars, h.address , h.images[1] as image
+      SELECT th.*, h.name, h.city, h.stars, h.address , h.images[1] as image , h.maps_url as maps_url , h.type as type
       FROM trip_hotels th
       JOIN hotels h ON th.hotel_id = h.id
       WHERE th.trip_id = $1`;
