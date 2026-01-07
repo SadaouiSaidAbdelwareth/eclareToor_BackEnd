@@ -11,5 +11,7 @@ router.post('/login', authController.login);
 // Routes protégées
 router.get('/profile', authenticateToken, authController.getProfile);
 router.delete('/', authenticateToken, requireAnyRole(["admin"]) ,authController.deleteManyUsers);
+router.get('/users', authenticateToken, requireAnyRole(["admin"]) ,authController.getAllUsers);
+
 
 export default router;

@@ -40,4 +40,13 @@ export class authController {
       res.status(400).json({ error: err.message });
     }
   }
+
+  static async getAllUsers(req, res) {
+    try {
+      const users = await authService.getUsers();
+      res.json({ users });
+    } catch (error) {
+      res.status(404).json({ error: error.message });
+    }
+  }
 }

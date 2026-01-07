@@ -54,4 +54,13 @@ export class UserModel {
   static async verifyPassword(password, hashedPassword) {
     return bcrypt.compare(password, hashedPassword);
   }
+
+  // Récupérer tous les utilisateurs
+  static async findAll() {
+    const result = await query(
+      `SELECT id, nom, prenom, email, role, is_active, created_at, linkFacebook, nationalite, phone 
+       FROM users`
+    );
+    return result.rows;
+  }
 }

@@ -67,5 +67,10 @@ export class authService {
     const result = await UserModel.deleteMany(userIds);
     return { message: `${userIds.length} utilisateurs supprimés` };
   }
+  // Récupérer tous les utilisateurs
+  static async getUsers() {
+    const users = await UserModel.findAll();
+    return users;
+  }
 
 }
