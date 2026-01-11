@@ -1,4 +1,5 @@
-import jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken'
+import { authService } from '../services/authService.js';
 
 export const authenticateToken = async (req, res, next) => {
   try {
@@ -58,4 +59,25 @@ export const requireAnyRole = (roles) => {
       res.status(403).json({ error: error.message });
     }
   };
+};
+
+export const checkUserActive =async (req, res, next) =>{
+  try {
+    const userId = req.user.userId; // depuis JWT
+    const user = await authService.getProfile(userId);
+    const isActive = user.is_active;
+    if (!isActive) {
+      return res.status(403).json({
+        message: "Your account is disabled. Contact admin."
+      });
+    }
+
+    next();
+
+  } catch (err) {
+    if (err.message === "USER_NOT_FOUND") {
+      return res.status(401).json({ message: "Invalid user" });
+    }
+    res.status(500).json({ message: "Server error" });
+  }
 };

@@ -63,4 +63,13 @@ export class UserModel {
     );
     return result.rows;
   }
+  
+  // Activer ou désactiver un utilisateur
+  static async setActiveStatus(userId, isActive) {
+    const result = await query(
+      `UPDATE users SET is_active = $1 WHERE id = $2 RETURNING id, nom, prenom, email, role, is_active, created_at, linkFacebook, nationalite, phone`,
+      [isActive, userId]
+    );
+    return result.rows[0];
+  }
 }

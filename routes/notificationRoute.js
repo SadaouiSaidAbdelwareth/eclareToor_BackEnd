@@ -7,12 +7,12 @@ import {
   deleteNotification,
   getUnreadCount
 } from '../controllers/notificationsController.js';
-import { authenticateToken } from '../middleware/auth.js';
+import { authenticateToken , checkUserActive} from '../middleware/auth.js';
 
 const router = express.Router();
 
 // Toutes les routes nécessitent une authentification
-router.use(authenticateToken);
+router.use(authenticateToken , checkUserActive);
 
 // Routes pour les notifications de l'utilisateur connecté
 router.get('/', getMyNotifications);

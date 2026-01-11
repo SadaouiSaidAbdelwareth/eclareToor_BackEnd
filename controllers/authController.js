@@ -49,4 +49,14 @@ export class authController {
       res.status(404).json({ error: error.message });
     }
   }
+
+  static async activeUser(req, res) {
+    try {
+      const { userId , status} = req.body; // Expect userId as query parameter
+      const result = await authService.activateUser(userId, status);
+      res.json({ message: 'Utilisateur status changer avec succès', ...result });
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
 }

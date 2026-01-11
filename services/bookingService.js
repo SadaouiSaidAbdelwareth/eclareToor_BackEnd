@@ -29,6 +29,9 @@ export const bookingService = {
       if (!userExists) {
         throw new Error("User not found");
       }
+      // if(userExists.is_active === false){
+      //   throw new Error("Cannot create booking for inactive user");
+      // }
       if(userExists.role === "admin" ){
         throw new Error("Admin must provide user_id to create booking");
       }
@@ -37,6 +40,12 @@ export const bookingService = {
     } else {
       // USER → ne peut pas spécifier un autre user_id
       userExists = await UserModel.findById(userId);
+      // if (!userExists) {
+      //   throw new Error("User not found");
+      // }
+      // if(userExists.is_active === false){
+      //   throw new Error("Cannot create booking for inactive user");
+      // }
       finalUserId = userId;
     }
     console.log("Final User ID for booking:", finalUserId);
@@ -77,7 +86,7 @@ export const bookingService = {
     try {
       const booking = await bookingModel.getById(bookingId);
       if (!booking) throw new Error("Booking not found");
-
+    
       // USER cannot modify someone else's booking
       if (user.role !== "admin" && booking.user_id !== user.userId) {
         throw new Error("You cannot modify this booking");

@@ -1,4 +1,3 @@
-import jwt from 'jsonwebtoken';
 import { UserModel } from '../models/userModel.js';
 import { NotificationService } from './notificationServer.js';
 import {generateToken} from '../middleware/auth.js';
@@ -37,8 +36,8 @@ export class authService {
     if (!email || !password) throw new Error('Email et mot de passe sont obligatoires');
 
     const user = await UserModel.findByEmail(email);
-    if (!user || !user.is_active) throw new Error('Email ou mot de passe incorrect');
-
+    if (!user) throw new Error('Email ou mot de passe incorrect');
+    if (!user.is_active) throw new Error('Compte utilisateur désactivé');
     const validPassword = await UserModel.verifyPassword(password, user.password);
     if (!validPassword) throw new Error('Email ou mot de passe incorrect');
     const token = generateToken(user);
@@ -71,6 +70,21 @@ export class authService {
   static async getUsers() {
     const users = await UserModel.findAll();
     return users;
+  }
+  // Activer ou désactiver un utilisateur
+  static async activateUser(userId, status) {
+    if (!userId) {
+      throw new Error('ID utilisateur requis');
+    }
+
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      throw new Error('Utilisateur non trouvé');
+    }
+
+    const userUpdate = await UserModel.setActiveStatus(userId, status);
+
+    return userUpdate;
   }
 
 }
