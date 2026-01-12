@@ -168,3 +168,23 @@ CREATE TABLE notifications (
     expires_at TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+
+
+//alter
+
+ALTER TABLE trips
+ADD COLUMN options JSON;
+
+ALTER TABLE bookings
+ADD COLUMN prix_calculer NUMERIC(10,2),
+ADD COLUMN prix_vrai_paye NUMERIC(10,2);
+
+
+ALTER TABLE trips
+ADD COLUMN promotion INTEGER DEFAULT 0;
+
+
+ALTER TABLE trips
+ADD CONSTRAINT trips_promotion_check
+CHECK (promotion >= 0 AND promotion <= 100);

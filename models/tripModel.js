@@ -6,17 +6,24 @@ export const tripModel = {
     const result = await pool.query(
       `INSERT INTO trips
       (type, title, description, start_date, end_date, base_price,
-       images, equipment_list, destination_wilaya, destination_country, omra_category)
-      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+      images, equipment_list, destination_wilaya, destination_country, omra_category,
+      options, promotion)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
       RETURNING *`,
       [
-        data.type, data.title, data.description,
-        data.start_date, data.end_date, data.base_price,
+        data.type,
+        data.title,
+        data.description,
+        data.start_date,
+        data.end_date,
+        data.base_price,
         data.images ?? [],
         data.equipment_list ?? null,
         data.destination_wilaya ?? null,
         data.destination_country ?? null,
-        data.omra_category ?? null
+        data.omra_category ?? null,
+        data.options ?? null,      // 🆕 JSON
+        data.promotion ?? 0        // 🆕 %
       ]
     );
     return result.rows[0];
@@ -38,18 +45,28 @@ export const tripModel = {
           type=$1, title=$2, description=$3, start_date=$4, end_date=$5,
           base_price=$6, equipment_list=$7, destination_wilaya=$8,
           destination_country=$9, omra_category=$10,
+          options=$11, promotion=$12,
           updated_at=NOW()
-       WHERE id=$11 RETURNING *`,
+      WHERE id=$13 RETURNING *`,
       [
-        data.type, data.title, data.description,
-        data.start_date, data.end_date, data.base_price,
-        data.equipment_list, data.destination_wilaya,
-        data.destination_country, data.omra_category, id
+        data.type,
+        data.title,
+        data.description,
+        data.start_date,
+        data.end_date,
+        data.base_price,
+        data.equipment_list,
+        data.destination_wilaya,
+        data.destination_country,
+        data.omra_category,
+        data.options ?? null,     // 🆕
+        data.promotion ?? 0,      // 🆕
+        id
       ]
     );
-
     return result.rows[0];
   },
+
 
   updateImages: async (id, images) => {
     const result = await pool.query(

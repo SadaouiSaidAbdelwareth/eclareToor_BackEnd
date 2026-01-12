@@ -9,7 +9,8 @@ export const tripService = {
         type, title, description,
         start_date, end_date, base_price,
         equipment_list, destination_wilaya, destination_country,
-        omra_category
+        omra_category,
+        options, promotion        // 🆕
       } = data;
 
       // Required fields
@@ -25,12 +26,20 @@ export const tripService = {
       if (type !== "religieuse") {
         data.omra_category = null;
       }
-    //   console.log("Saved images:", type);
+      //   console.log("Saved images:", type);
+      if (promotion !== undefined) {
+        const p = Number(promotion);
+        if (isNaN(p) || p < 0 || p > 100) {
+          throw new Error("Promotion must be between 0 and 100");
+        }
+      }
 
       // save images
      const images = fileService.saveImages("trips", files);
       return await tripModel.create({
         ...data,
+        options: options || null,
+        promotion: promotion || 0,
         images
       });
 
