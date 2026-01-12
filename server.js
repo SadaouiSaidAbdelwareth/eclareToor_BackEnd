@@ -12,6 +12,7 @@ import bookingRoutes from "./routes/bookingRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
 import requestRoutes from "./routes/requestRoutes.js";
 import responseRoutes from "./routes/requestResponseRoutes.js";
+import dashboardRoute from './routes/dashbordRoute.js';
 import { testConnection } from './config/database.js';
 // a supp apres
 import { pool } from './config/database.js';
@@ -26,6 +27,7 @@ const PORT = process.env.PORT || 3000;
 app.use(morgan('dev')); 
 app.use(express.json());
 app.use(cors());
+
 // To serve images
 app.use("/api/uploads", express.static("uploads"));
 
@@ -38,10 +40,9 @@ app.use("/api/bookings", bookingRoutes);
 app.use("/api/contacts", contactRoutes);
 app.use("/api/requests", requestRoutes);
 app.use("/api/responses", responseRoutes);
-
-// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/notif', notifRoutes);
+app.use('/api/dashbord', dashboardRoute);
 
 app.get('/', (req, res) => {
   res.json({ message: 'API Auth JWT 🚀' });
