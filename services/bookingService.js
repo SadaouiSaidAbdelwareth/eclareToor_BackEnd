@@ -7,14 +7,15 @@ export const bookingService = {
   async create(user, data) {
     const { role, userId} = user;
     const {
-      user_id = null,
-      trip_id,
-      passengers_adult,
-      passengers_child = 0,
-      passengers_baby = 0,
-      prix_calculer,
-      prix_vrai_paye
-    } = data;
+        user_id = null,
+        trip_id,
+        passengers_adult,
+        passengers_child = 0,
+        passengers_baby = 0,
+        prix_calculer,
+        prix_vrai_paye,
+        options = {} 
+      } = data;
 
     let userExists = null;
     let finalUserId;
@@ -76,7 +77,8 @@ export const bookingService = {
       passengers_child,
       passengers_baby,
       prix_calculer,
-      finalPrixVrai
+      finalPrixVrai,
+      options
     );
      
     // Envoi de notification aux admins
@@ -117,6 +119,7 @@ export const bookingService = {
       if (data.passengers_child != null) fields.passengers_child = data.passengers_child;
       if (data.passengers_baby != null) fields.passengers_baby = data.passengers_baby;
       fields.prix_calculer = data.prix_calculer != null ? data.prix_calculer : booking.prix_calculer; // keep original calculated price
+      if (data.options != null) fields.options = data.options;
       // Status update management
       if (data.status) {
         if (user.role !== "admin") {

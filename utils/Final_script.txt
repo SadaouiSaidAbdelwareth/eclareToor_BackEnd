@@ -188,3 +188,8 @@ ADD COLUMN promotion INTEGER DEFAULT 0;
 ALTER TABLE trips
 ADD CONSTRAINT trips_promotion_check
 CHECK (promotion >= 0 AND promotion <= 100);
+
+
+//alter. 2
+
+ALTER TABLE bookings ADD COlumn options JSON;

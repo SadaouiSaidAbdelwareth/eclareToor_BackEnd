@@ -1,11 +1,11 @@
 import { pool } from "../config/database.js";
 
 export const bookingModel = {
-  create: async (userId, tripId, adult, child, baby, prix_calculer, prix_vrai_paye) => {
+  create: async (userId, tripId, adult, child, baby, prix_calculer, prix_vrai_paye,options) => {
     const result = await pool.query(
       `INSERT INTO bookings 
-      (user_id, trip_id, passengers_adult, passengers_child, passengers_baby, status, prix_calculer, prix_vrai_paye)
-      VALUES ($1,$2,$3,$4,$5,'PENDING',$6,$7)
+      (user_id, trip_id, passengers_adult, passengers_child, passengers_baby, status, prix_calculer, prix_vrai_paye,options)
+      VALUES ($1,$2,$3,$4,$5,'PENDING',$6,$7,$8)
       RETURNING *`,
       [
         userId,
@@ -14,7 +14,8 @@ export const bookingModel = {
         child,
         baby,
         prix_calculer,
-        prix_vrai_paye ?? prix_calculer   // 🔥 fallback
+        prix_vrai_paye ?? prix_calculer ,
+        options ?? {}
       ]
     );
     return result.rows[0];
