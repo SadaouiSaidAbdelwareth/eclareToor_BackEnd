@@ -17,7 +17,8 @@ export const fileService = {
       const ext = path.extname(file.originalname);
       const filename = `${nanoid()}${ext}`;
       const dest = path.join(process.cwd(), "uploads", folder, filename);
-      fs.renameSync(file.path, dest);
+      fs.copyFileSync(file.path, dest);
+      fs.unlinkSync(file.path);
       saved.push(`/uploads/${folder}/${filename}`);
     });
 
