@@ -1,8 +1,22 @@
 import { authService } from '../services/authService.js';
+import { verifyToken } from '../middleware/auth.js';
 
 export class authController {
   static async register(req, res) {
     try {
+      // Prevent public creation of admin accounts: if request asks for role 'admin',
+      // require a valid admin JWT in Authorization header.
+      if (req.body && req.body.role === 'admin') {
+        const token = req.header('Authorization')?.replace('Bearer ', '');
+        if (!token) return res.status(401).json({ error: 'Token admin requis pour créer un compte admin' });
+        try {
+          const decoded = verifyToken(token);
+          if (decoded.role !== 'admin') return res.status(403).json({ error: 'Seul admin peut créer un compte admin' });
+        } catch (err) {
+          return res.status(401).json({ error: 'Token invalide' });
+        }
+      }
+
       const result = await authService.register(req.body);
       res.status(201).json({ message: 'Compte créé avec succès', ...result });
     } catch (error) {
